@@ -58,6 +58,17 @@ client.connect((err) => {
         
     })
 
+    app.get("/orders", (req, res)=> {
+        ordersCollection.find({}).toArray((err, documents)=>{
+            if(err){
+                res.send(err)
+            }
+            else{
+                res.send(documents);
+            }
+        })
+    })
+
     app.post ("/add-order", (req, res)=> {
         ordersCollection.insertOne(req.body).then((result)=> {
             res.send(result.insertedCount> 0)
@@ -65,7 +76,20 @@ client.connect((err) => {
 
     })
 
-    
+    app.delete("/delete-order/:orderId", (req, res)=> {
+        ordersCollection.deleteOne({
+            _id:objectId(req.params.orderId)
+        }).then(result => {
+            res.send(result.deletedCount> 0)
+        })
+    })
+
+    app.delete("/delete-service/:serviceId", (req, res)=> {
+        ServiceCollection.deleteOne({
+            _id:objectId(req.params.serviceId)
+        }).then(result => result.deletedCount> 0)
+    })
+
 
 
 });
